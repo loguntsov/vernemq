@@ -53,6 +53,8 @@ data_in(Data, #state{peer = Peer,
             E;
         {error, Reason} ->
             {error, Reason, []};
+        {{ error, Reason }, Rest} when is_binary(Rest) ->
+            {error, Reason, []};
         {#mqtt5_connect{} = ConnectFrame, Rest} ->
             erlang:cancel_timer(TRef),
             case vmq_mqtt5_fsm:init(Peer, Opts, ConnectFrame) of
@@ -85,7 +87,7 @@ parse_connect_frame(Data, MaxMessageSize) ->
             E
     end.
 
-determine_protocol_version(<<1:4, 0:4, Rest/binary>>) ->
+determine_protocol_version(<<_:1/binary, Rest/binary>>) -> 
     consume_var_header(Rest);
 determine_protocol_version(Unknown) ->
     {error, {cant_parse_connect_fixed_header, Unknown}}.
