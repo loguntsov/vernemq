@@ -167,6 +167,8 @@ variable(<<?CONNECT:4, 0:4>>,
             end;
         E -> E
     end;
+variable(<<?CONNECT:4, 2:4>>, Var) ->
+  variable(<<?CONNECT:4, 0:4>>, Var);
 variable(<<?CONNACK:4, 0:4>>, <<0:7, SP:1, ReturnCode:8/big>>) ->
     #mqtt_connack{session_present=SP, return_code=ReturnCode};
 variable(<<?PINGREQ:4, 0:4>>, <<>>) ->
